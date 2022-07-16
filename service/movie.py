@@ -1,27 +1,39 @@
 from dao.movie import MovieDAO
+from utils import make_dict, get_length_page
 
 
 class MovieService:
     def __init__(self, dao: MovieDAO):
         self.dao = dao
 
-    def get_all(self, filters_dict: dict = None, page: int = 1, length_list: int = 10):
-        filter_dict = filters_dict
-        limit = round(page * length_list)  # can set any length of the movie list
-        offset = limit - length_list
+    def get_all(self, attributes: dict = None):
+        movies = self.dao.get_all()
+        if attributes:
+            status_dict, filter_dict = make_dict(attributes)
+            if 'page' in status_dict:
+                length_page = get_length_page(page=status_dict['page'])
+                movies = self.dao.get_all(limit=length_page['limit'], offset=length_page['offset'])
+                if status_dict['status']:
+                    movies = self.dao.get_all(
+                        limit=length_page['limit'],
+                        offset=length_page['offset'],
+                        status=status_dict['status']
+                    )
+                if filter_dict:
+                    movies = self.dao.get_by_filter(
+                        filters=filter_dict,
+                        limit=length_page['limit'],
+                        offset=length_page['offset'],
+                        status=status_dict['status']
+                    )
 
-        movies = self.dao.get_all(limit=limit, offset=offset)
-        if filter_dict:
-            if 'genre_id' in filter_dict.keys():
-                filter_dict.update(genre_id=int(filter_dict['genre_id']))
-            if 'director_id' in filter_dict.keys():
-                filter_dict.update(director_id=int(filter_dict['director_id']))
-            if 'rating' in filter_dict.keys():
-                filter_dict.update(rating=float(filter_dict['rating']))
-            if 'year' in filter_dict.keys():
-                filter_dict.update(year=int(filter_dict['year']))
-            if len(filter_dict) > 0:
-                movies = self.dao.get_by_filter(filter_dict)
+            if status_dict['status'] and 'page' not in status_dict:
+                movies = self.dao.get_all(status=status_dict['status'])
+                if filter_dict:
+                    movies = self.dao.get_by_filter(
+                        filters=filter_dict,
+                        status=status_dict['status']
+                    )
 
         return movies
 

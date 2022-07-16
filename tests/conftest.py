@@ -94,9 +94,9 @@ def director_dao():
 def user_dao():
     user_dao = UserDAO(None)
 
-    first_user = User(id=1, username='Ivan', password='password', role='admin')
-    second_user = User(id=2, username='John', password='password', role='user')
-    third_user = User(id=3, username='Mike', password='password', role='user')
+    first_user = User(id=1, name='Ivan', password='password')
+    second_user = User(id=2, name='John', password='password')
+    third_user = User(id=3, name='Mike', password='password')
 
     user_dao.get_one = MagicMock(return_value=first_user)
     user_dao.get_all = MagicMock(return_value=[first_user, second_user, third_user])

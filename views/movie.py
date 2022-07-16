@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Namespace, Resource
 
-from decorator import auth_required, admin_required
+from decorator import auth_required
 from container import movie_service
 from dao.model.movie import movies_schema, movie_schema
 
@@ -13,20 +13,16 @@ class MoviesView(Resource):
     @auth_required
     def get(self):
         req_args = dict(request.args)
-        movies = movie_service.get_all_movies(filters_dict=req_args)
-        page = request.args.get('page')
-        if page:
-            movies = movie_service.get_all_movies(filters_dict=req_args, page=int(page))
-
+        movies = movie_service.get_all(attributes=req_args)
         if len(movies_schema.dump(movies)) == 0:
             return 'Invalid variables specified', 404
 
         return movies_schema.dump(movies), 200
 
-    @admin_required
+    @auth_required
     def post(self):
         req_json = request.json
-        movie_service.add_movies(req_json)
+        movie_service.create(req_json)
 
         return 'Movie appended', 201
 
@@ -38,12 +34,12 @@ class MoviesView(Resource):
 class MovieView(Resource):
     @auth_required
     def get(self, mid: int):
-        movie = movie_service.get_one_movie(mid)
+        movie = movie_service.get_one(mid)
         if movie:
             return movie_schema.dump(movie), 200
         return 'Movie not found', 404
 
-    @admin_required
+    @auth_required
     def path(self, mid: int):
         req_json = request.json
         req_json['id'] = mid
@@ -52,16 +48,16 @@ class MovieView(Resource):
             return 'Movie updated', 204
         return 'Movie not found', 404
 
-    @admin_required
+    @auth_required
     def put(self, mid: int):
         req_json = request.json
         req_json['id'] = mid
-        movie = movie_service.update_movie(req_json)
+        movie = movie_service.update(req_json)
         if movie:
             return 'Movie updated', 204
         return 'Movie not found', 404
 
-    @admin_required
+    @auth_required
     def delete(self, mid: int):
         movie = movie_service.delete(mid)
         if movie:
