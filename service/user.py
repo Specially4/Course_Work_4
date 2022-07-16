@@ -13,45 +13,49 @@ class UserService:
     def __init__(self, dao: UserDAO):
         self.dao = dao
 
-    def get_all_users(self):
-        return self.dao.get_all_users()
+    def get_all(self):
+        return self.dao.get_all()
 
-    def get_one_user(self, uid: int):
-        return self.dao.get_one_user(uid)
+    def get_one(self, uid: int):
+        return self.dao.get_one(uid)
 
-    def get_filter_by_name(self, username):
-        return self.dao.get_filter_by_name(username)
+    def get_filter_by_name(self, email):
+        return self.dao.get_filter_by_email(email)
 
-    def add_users(self, data):
+    def create(self, data):
         data["password"] = self.get_hash(data.get('password'))
-        return self.dao.add_users(data)
+        return self.dao.create(data)
 
-    def update_user(self, data):
+    def update(self, data):
         uid = data.get('id')
-        user = self.get_one_user(uid)
+        user = self.get_one(uid)
 
-        user.username = data.get('username')
+        user.email = data.get('email')
         user.password = self.get_hash(data.get('password'))
         user.role = data.get('role')
 
-        self.dao.update_user(user)
+        self.dao.update(user)
 
     def update_partial(self, data):
         uid = data.get('id')
 
-        user = self.get_one_user(uid)
+        user = self.get_one(uid)
 
-        if 'username' in data:
-            user.username = data.get('username')
+        if 'email' in data:
+            user.email = data.get('email')
+        if 'name' in data:
+            user.name = self.get_hash(data.get('name'))
+        if 'surname' in data:
+            user.surname = data.get('surname')
         if 'password' in data:
             user.password = self.get_hash(data.get('password'))
-        if 'role' in data:
-            user.role = data.get('role')
+        if 'favorite_genre' in data:
+            user.favorite_genre = data.get('favorite_genre')
 
-        self.dao.update_user(user)
+        self.dao.update(user)
 
     def delete(self, uid: int):
-        user = self.get_one_user(uid)
+        user = self.get_one(uid)
 
         self.dao.delete(user)
 
