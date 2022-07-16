@@ -1,3 +1,6 @@
-/.pytest_cache/
-/venv/
-/.idea/
+venv/
+.idea/
+.*_cache/
+__pycache__
+*.db
+.coverage
