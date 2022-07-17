@@ -17,7 +17,7 @@ class AuthView(Resource):
 
         data = {
             'email': email,
-            'role': password
+            'password': password
         }
 
         try:
@@ -37,7 +37,7 @@ class AuthView(Resource):
         if None in [email, password]:
             abort(400)
 
-        user = user_service.get_filter_by_name(email)
+        user = user_service.get_filter_by_email(email)
 
         if user is None:
             abort(401)
@@ -66,7 +66,7 @@ class AuthView(Resource):
 
         email = data.get('email')
 
-        user = user_service.get_filter_by_name(email)
+        user = user_service.get_filter_by_email(email)
 
         data = {
             'email': user.email

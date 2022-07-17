@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restx import Api
 
 from config import Config
-from setup_db import db
+from db import db
 from views.user import users_ns
 from views.auth import auth_ns
 from views.director import directors_ns
