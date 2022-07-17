@@ -6,7 +6,7 @@ from service.director import DirectorService
 from service.genre import GenreService
 from service.movie import MovieService
 from service.user import UserService
-from setup_db import db
+from db import db
 
 genre_dao = GenreDAO(db.session)
 genre_service = GenreService(genre_dao)

@@ -22,7 +22,11 @@ class MoviesView(Resource):
     @auth_required
     def post(self):
         req_json = request.json
-        movie_service.create(req_json)
+        if type(req_json) == list:
+            for item in req_json:
+                movie_service.create(item)
+        else:
+            movie_service.create(req_json)
 
         return 'Movie appended', 201
 
@@ -40,7 +44,7 @@ class MovieView(Resource):
         return 'Movie not found', 404
 
     @auth_required
-    def path(self, mid: int):
+    def patch(self, mid: int):
         req_json = request.json
         req_json['id'] = mid
         movie = movie_service.update_partial(req_json)

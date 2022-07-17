@@ -16,8 +16,13 @@ class DirectorsView(Resource):
         return directors_schema.dump(directors), 200
 
     def post(self):
-        data = request.json
-        directors = director_service.create(data)
+        req_json = request.json
+        if type(req_json) == list:
+            for item in req_json:
+                director_service.create(item)
+        else:
+            director_service.create(req_json)
+
         return 'Object appended', 201
 
     def delete(self):
@@ -34,7 +39,7 @@ class DirectorView(Resource):
         return 'Object not found', 404
 
     @auth_required
-    def path(self, did: int):
+    def patch(self, did: int):
         req_json = request.json
         req_json['id'] = did
         director = director_service.update_partial(req_json)

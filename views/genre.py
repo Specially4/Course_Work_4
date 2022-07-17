@@ -18,7 +18,11 @@ class GenresView(Resource):
     @auth_required
     def post(self):
         req_json = request.json
-        genre_service.create(req_json)
+        if type(req_json) == list:
+            for item in req_json:
+                genre_service.create(item)
+        else:
+            genre_service.create(req_json)
 
         return 'Object appended', 201
 
@@ -36,7 +40,7 @@ class GenreView(Resource):
         return 'Object not found', 404
 
     @auth_required
-    def path(self, gid: int):
+    def patch(self, gid: int):
         req_json = request.json
         req_json['id'] = gid
         genre = genre_service.update_partial(req_json)

@@ -3,59 +3,35 @@ from flask_restx import Namespace, Resource
 
 from decorator import auth_required
 from container import user_service
-from dao.model.user import users_schema, user_schema
+from dao.model.user import user_schema
 
 users_ns = Namespace('user')
 
 
-@users_ns.route('/')
-class UsersView(Resource):
-    @auth_required
-    def get(self):
-        users = user_service.get_all()
-        return users_schema.dump(users), 200
-
-    def post(self):
-        data = request.json
-        user_service.create(data)
-        return {'message': 'Object appended'}, 201
-
-    def delete(self):
-        pass
-
-
-@users_ns.route('/<int:did>')
+@users_ns.route('/', methods=['GET', 'PATCH'])
 class UserView(Resource):
     @auth_required
-    def get(self, did: int):
-        user = user_service.get_one(did)
+    def get(self):
+        data = request.headers['Authorization']
+        token = data.split("Bearer ")[-1]
+        email = user_service.check_token(token)['email']
+        user = user_service.get_filter_by_email(email)
         if user:
             return user_schema.dump(user), 200
-        return {'message': 'Object updated'}, 400
+        return {'message': 'Object not found'}, 400
 
     @auth_required
-    def path(self, did: int):
+    def patch(self):
         req_json = request.json
-        req_json['id'] = did
+        data = request.headers['Authorization']
+        token = data.split("Bearer ")[-1]
+        email = user_service.check_token(token)['email']
+        user = user_service.get_filter_by_email(email)
+        uid = user.id
+        req_json['id'] = uid
         user = user_service.update_partial(req_json)
         if user:
             return {'message': 'Object updated'}, 204
-        return {'message': 'Object not found'}, 400
-
-    @auth_required
-    def put(self, did: int):
-        req_json = request.json
-        req_json['id'] = did
-        user = user_service.update(req_json)
-        if user:
-            return {'message': 'Object updated'}, 204
-        return {'message': 'Object not found'}, 400
-
-    @auth_required
-    def delete(self, did: int):
-        user = user_service.delete(did)
-        if user:
-            return {'message': 'Object deleted'}, 204
         return {'message': 'Object not found'}, 400
 
 
@@ -69,7 +45,7 @@ class UserView(Resource):
         data = request.headers['Authorization']
         token = data.split("Bearer ")[-1]
         email = user_service.check_token(token)['email']
-        user = user_service.get_filter_by_name(email)
+        user = user_service.get_filter_by_email(email)
         uid = user.id
 
         data = {'id': uid, 'password': new_password}

@@ -19,11 +19,11 @@ class UserService:
     def get_one(self, uid: int):
         return self.dao.get_one(uid)
 
-    def get_filter_by_name(self, email):
+    def get_filter_by_email(self, email):
         return self.dao.get_filter_by_email(email)
 
     def create(self, data):
-        data["password"] = self.get_hash(data.get('password'))
+        data["password"] = self.get_hash(data['password'])
         return self.dao.create(data)
 
     def update(self, data):
@@ -32,7 +32,8 @@ class UserService:
 
         user.email = data.get('email')
         user.password = self.get_hash(data.get('password'))
-        user.role = data.get('role')
+        user.name = data.get('name')
+        user.favorite_genre = data.get('favorite_genre')
 
         self.dao.update(user)
 
@@ -52,7 +53,7 @@ class UserService:
         if 'favorite_genre' in data:
             user.favorite_genre = data.get('favorite_genre')
 
-        self.dao.update(user)
+        return self.dao.update(user)
 
     def delete(self, uid: int):
         user = self.get_one(uid)

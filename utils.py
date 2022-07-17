@@ -1,6 +1,6 @@
 
 
-def make_dict(attributes: dict) -> dict:
+def make_dict(attributes: dict) -> tuple:
     status_dict = {}
     filter_dict = {}
 

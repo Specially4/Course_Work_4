@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields
 
-from setup_db import db
+from db import db
 
 
 class User(db.Model):
@@ -19,7 +19,6 @@ class UserSchema(Schema):
     email = fields.Str()
     name = fields.Str()
     surname = fields.Str()
-    password = fields.Str()
     favorite_genre = fields.Int()
 
 
