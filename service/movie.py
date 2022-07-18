@@ -27,14 +27,14 @@ class MovieService:
                     )
                 case {"page": int(page)} if not filter_dict:
                     movies = self.dao.get_all(
-                        limit=get_length_page(page)['limit'], 
-                        offset=get_length_page(page)['offset']
+                            limit=get_length_page(page)['limit'], 
+                            offset=get_length_page(page)['offset']
                     )
                 case {"page": int(page), "status": "new"} if  not filter_dict:
                     movies = self.dao.get_all(
-                        limit=get_length_page(page)['limit'],
-                        offset=get_length_page(page)['offset'],
-                        status=status_dict['status']
+                            limit=get_length_page(page)['limit'],
+                            offset=get_length_page(page)['offset'],
+                            status=status_dict['status']
                     )
                 case {"status": "new"} if filter_dict:
                     movies = self.dao.get_by_filter(
