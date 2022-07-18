@@ -10,30 +10,43 @@ class MovieService:
         movies = self.dao.get_all()
         if attributes:
             status_dict, filter_dict = make_dict(attributes)
-            if 'page' in status_dict:
-                length_page = get_length_page(page=status_dict['page'])
-                movies = self.dao.get_all(limit=length_page['limit'], offset=length_page['offset'])
-                if status_dict['status']:
+            
+            match status_dict:
+                case {"page": int(page), "status": "new"} if filter_dict:
+                    movies = self.dao.get_by_filter(
+                            filters=filter_dict,
+                            limit=get_length_page(page)['limit'],
+                            offset=get_length_page(page)['offset'],
+                            status=status_dict['status']
+                    )
+                case {"page": int(page)} if filter_dict:
+                    movies = self.dao.get_by_filter(
+                            filters=filter_dict,
+                            limit=get_length_page(page)['limit'],
+                            offset=get_length_page(page)['offset']
+                    )
+                case {"page": int(page)} if not filter_dict:
                     movies = self.dao.get_all(
-                        limit=length_page['limit'],
-                        offset=length_page['offset'],
+                        limit=get_length_page(page)['limit'], 
+                        offset=get_length_page(page)['offset']
+                    )
+                case {"page": int(page), "status": "new"} if  not filter_dict:
+                    movies = self.dao.get_all(
+                        limit=get_length_page(page)['limit'],
+                        offset=get_length_page(page)['offset'],
                         status=status_dict['status']
                     )
-                if filter_dict:
+                case {"status": "new"} if filter_dict:
                     movies = self.dao.get_by_filter(
-                        filters=filter_dict,
-                        limit=length_page['limit'],
-                        offset=length_page['offset'],
-                        status=status_dict['status']
+                            filters=filter_dict,
+                            status=status_dict['status']
                     )
-
-            if status_dict['status'] and 'page' not in status_dict:
-                movies = self.dao.get_all(status=status_dict['status'])
-                if filter_dict:
-                    movies = self.dao.get_by_filter(
-                        filters=filter_dict,
-                        status=status_dict['status']
-                    )
+                case {"status": "new"} if not filter_dict:
+                    movies = self.dao.get_all(status=status_dict['status'])
+                case _ if filter_dict:
+                    movies = self.dao.get_by_filter(filters=filter_dict)
+                case _ if not filter_dict:
+                    movies = self.dao.get_all()
 
         return movies
 
