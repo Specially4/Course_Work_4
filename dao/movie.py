@@ -8,20 +8,22 @@ class MovieDAO:
 
     def get_all(self, limit: int = None, offset: int = None, status: bool = False):
         movies = self.session.query(Movie)
-        if limit:
-            movies = movies.limit(limit).offset(offset)
         if status:
             movies = movies.order_by(desc(Movie.year))
+        if limit:
+            movies = movies.limit(limit).offset(offset)
+        
         return movies.all()
 
     def get_by_filter(self, filters, limit: int = None, offset: int = None, status: bool = False):
         movies = self.session.query(Movie)
         for attr, value in filters.items():
             movies = movies.filter(getattr(Movie, attr).like("%%%s%%" % value))
-        if limit:
-            movies = movies.limit(limit).offset(offset)
         if status:
             movies = movies.order_by(desc(Movie.year))
+        if limit:
+            movies = movies.limit(limit).offset(offset)
+        
         return movies.all()
 
     def get_one(self, mid: int):
