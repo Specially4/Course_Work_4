@@ -45,7 +45,7 @@ class UserService:
         if 'email' in data:
             user.email = data.get('email')
         if 'name' in data:
-            user.name = self.get_hash(data.get('name'))
+            user.name = data.get('name')
         if 'surname' in data:
             user.surname = data.get('surname')
         if 'password' in data:
