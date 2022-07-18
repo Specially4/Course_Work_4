@@ -43,15 +43,18 @@ class AuthView(Resource):
             abort(401)
 
         try:
-            user_service.compare_passwords(user.password, password)
+            status = user_service.compare_passwords(user.password, password)
         except Exception as e:
             abort(401, message=str(e))
-
-        data = {
-            'email': user.email
-        }
-        tokens = user_service.get_jwt(data)
-        return tokens, 201
+        
+        if status:
+            data = {
+                'email': user.email
+            }
+            tokens = user_service.get_jwt(data)
+            return tokens, 201
+        else:
+            abort(401)
 
     def put(self):
         req_json = request.json
