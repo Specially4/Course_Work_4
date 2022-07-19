@@ -23,9 +23,9 @@ class AuthView(Resource):
         try:
             user = user_service.create(data)
         except Exception as e:
-            abort(400, message=str(e))
+            abort(400, str(e))
 
-        return 201
+        return {'message': 'Create a new user account'}, 201
 
 
 @auth_ns.route('/login')
