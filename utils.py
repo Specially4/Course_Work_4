@@ -6,10 +6,10 @@ def make_dict(attributes: dict) -> tuple:
 
     if 'page' in attributes:
         status_dict['page'] = int(attributes['page'])
-    if 'status' in attributes:
+    if 'status' not in attributes:
         status_dict['status'] = False
-        if attributes['status'].lower() in 'new':
-            status_dict['status'] = True
+    if attributes['status'].lower() == 'new':
+        status_dict['status'] = True
     if 'title' in attributes:
         filter_dict['title'] = str(attributes['title'])
     if 'description' in attributes:

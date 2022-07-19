@@ -12,40 +12,40 @@ class MovieService:
             status_dict, filter_dict = make_dict(attributes)
             
             match status_dict:
-                case {"page": int(page), "status": "new"} if filter_dict:
+                case {"page": int(page), "status": True} if filter_dict:
                     movies = self.dao.get_by_filter(
                             filters=filter_dict,
                             limit=get_length_page(page)['limit'],
                             offset=get_length_page(page)['offset'],
                             status=status_dict['status']
                     )
-                case {"page": int(page)} if filter_dict:
+                case {"page": int(page), "status": False} if filter_dict:
                     movies = self.dao.get_by_filter(
                             filters=filter_dict,
                             limit=get_length_page(page)['limit'],
                             offset=get_length_page(page)['offset']
                     )
-                case {"page": int(page)} if not filter_dict:
+                case {"page": int(page), "status": False} if not filter_dict:
                     movies = self.dao.get_all(
                             limit=get_length_page(page)['limit'], 
                             offset=get_length_page(page)['offset']
                     )
-                case {"page": int(page), "status": "new"} if  not filter_dict:
+                case {"page": int(page), "status": True} if not filter_dict:
                     movies = self.dao.get_all(
                             limit=get_length_page(page)['limit'],
                             offset=get_length_page(page)['offset'],
                             status=status_dict['status']
                     )
-                case {"status": "new"} if filter_dict:
+                case {"status": True} if filter_dict:
                     movies = self.dao.get_by_filter(
                             filters=filter_dict,
                             status=status_dict['status']
                     )
-                case {"status": "new"} if not filter_dict:
+                case {"status": True} if not filter_dict:
                     movies = self.dao.get_all(status=status_dict['status'])
-                case _ if filter_dict:
+                case {"status": False} if filter_dict:
                     movies = self.dao.get_by_filter(filters=filter_dict)
-                case _ if not filter_dict:
+                case {"status": False} if not filter_dict:
                     movies = self.dao.get_all()
 
         return movies
