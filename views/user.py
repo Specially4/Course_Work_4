@@ -51,10 +51,11 @@ class UserView(Resource):
         data = {'id': uid, 'password': new_password}
 
         try:
-            user_service.compare_passwords(user.password, old_password)
+            status = user_service.compare_passwords(user.password, old_password)
         except Exception as e:
             abort(401, message=str(e))
-
-        user_service.update_partial(data)
-
-        return {'message': 'Password changed'}, 200
+        if status:
+            user_service.update_partial(data)
+            return {'message': 'Password changed'}, 200
+        else:
+            abort(401)
